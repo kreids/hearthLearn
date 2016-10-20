@@ -1,2 +1,2 @@
 # hearthLearn
-Machine learning applied to hearthstone
+Machine learning applied to HearthStone

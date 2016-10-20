@@ -17,7 +17,12 @@
 	<version>3.0.0</version>
 	<scope>test</scope>
 	</dependency>
-</dependencies>
-  
+	
+	<dependency>
+    <groupId>com.typesafe.play</groupId>
+    <artifactId>play_2.11</artifactId>
+    <version>2.5.9</version>
+	</dependency>
+	</dependencies>
   
 </project>

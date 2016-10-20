@@ -1,2 +1,2 @@
-# hearthlearn
+# hearthLearn
 Machine learning applied to hearthstone

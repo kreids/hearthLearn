@@ -48,10 +48,33 @@ class JsonParserTest extends FunSpec with BeforeAndAfter{
 	describe("historyParseToPlayList"){
 		describe("when called on any turn history spanning turns after turn 1"){
 			val historyParse = objectUnderTest.historyParseToPlayList(ANY_VALID_CARD_HISTORY_SPANNING_TURNS_AFTER_TURN_ONE)
-			
+			val playerIt = historyParse._1.iterator
+			val opponentIt = historyParse._2.iterator
+			it("has the correct first element in player list"){
+				val elt1Player = playerIt.next
+				assertPlayListElement("CS2_101", 2, 2, elt1Player)
+			}
+			it("has the correct first element in opponent list"){
+				val elt1Opponent = opponentIt.next
+				assertPlayListElement("OG_303", 2, 2, elt1Opponent)
+			}
+			it("has the correct second element in opponent list"){
+				val elt2Opponent = opponentIt.next
+				assertPlayListElement("CS2_034", 2, 3, elt2Opponent)
+			}
+			it("has the correct third element in opponent list"){
+				val elt3Opponent = opponentIt.next
+				assertPlayListElement("NEW1_012", 1, 3, elt3Opponent)
+			}		
 		}
 	}
 	
+	
+	def assertPlayListElement(expectedId:String,expectedMana:Int,expectedTurn:Int, parsedTurn:(Card,Int)){
+		assertCard(expectedId, expectedMana, parsedTurn._1)
+		assertInt(expectedTurn,parsedTurn._2,"TURN")
+	}
+		
 	def assertPlay(expectedId:String,expectedMana:Int,expectedTurn:Int,expectedIsOpponent:Boolean, parsedTurn:(Card,Int,Boolean)){
 		assertCard(expectedId, expectedMana, parsedTurn._1)
 		assertInt(expectedTurn,parsedTurn._2,"TURN")

@@ -78,21 +78,21 @@ class JsonParserTest extends FunSpec with BeforeAndAfter{
 			val elt1Player:Turn = playerIt.next
 			val elt1PlayerTurnIt = elt1Player.plays.iterator
 			it("has the correct first card in first Turn in player list"){
-				assertInt(elt1Player.turn, 2, "TURN")				
+				assertInt(2, elt1Player.turn, "TURN")				
 				assertCard("CS2_101", 2, elt1PlayerTurnIt.next)		
 			}
 			
 			val elt1Opponent:Turn = opponentIt.next
 			val elt1OpponentTurnIt = elt1Opponent.plays.iterator
 			it("has the correct first card in first Turn in opponent list"){
-				assertInt(elt1Opponent.turn, 2, "TURN")
+				assertInt(2, elt1Opponent.turn, "TURN")
 				assertCard("OG_303", 2, elt1OpponentTurnIt.next)
 			}
 			
 			val elt2Opponent:Turn = opponentIt.next
 			val elt2OpponentTurnIt = elt2Opponent.plays.iterator
 			it("has the correct first card in second Turn in opponent list"){
-				assertInt(elt2Opponent.turn, 3, "TURN")
+				assertInt(3, elt2Opponent.turn, "TURN")
 				assertCard("CS2_034", 2, elt2OpponentTurnIt.next)
 			}
 			
@@ -101,10 +101,7 @@ class JsonParserTest extends FunSpec with BeforeAndAfter{
 			}
 		}
 	}
-	"[{\"player\":\"opponent\",\"turn\":2,\"card\":{\"id\":\"OG_303\",\"name\":\"Cult Sorcerer\",\"mana\":2}},"+
-		"{\"player\":\"me\",\"turn\":2,\"card\":{\"id\":\"CS2_101\",\"name\":\"Reinforce\",\"mana\":2}},"+
-		"{\"player\":\"opponent\",\"turn\":3,\"card\":{\"id\":\"CS2_034\",\"name\":\"Fireblast\",\"mana\":2}},"+
-		"{\"player\":\"opponent\",\"turn\":3,\"card\":{\"id\":\"NEW1_012\",\"name\":\"Mana Wyrm\",\"mana\":1}}]"
+	
 	
 	def assertPlayListElement(expectedId:String,expectedMana:Int,expectedTurn:Int, parsedTurn:(Card,Int)){
 		assertCard(expectedId, expectedMana, parsedTurn._1)

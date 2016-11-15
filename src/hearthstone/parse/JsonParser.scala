@@ -63,6 +63,9 @@ class JsonParser {
 		
 		for(jPlay<-jHistory){
 			val play = playParse(jPlay)
+			if(prevTurn == -1){
+				prevIsOpponent = play._3
+			}
 			if((prevTurn != -1)&&
 					(play._2 != prevTurn || play._3 != prevIsOpponent)){
 				if(prevIsOpponent){

@@ -71,10 +71,40 @@ class JsonParserTest extends FunSpec with BeforeAndAfter{
 	
 	describe("historyParseToTurnList"){
 		describe("when called on any turn history spanning turns after turn 1"){
+			val historyParse = objectUnderTest.historyParseToTurnList(ANY_VALID_CARD_HISTORY_SPANNING_TURNS_AFTER_TURN_ONE)
+			val playerIt = historyParse._1.iterator
+			val opponentIt = historyParse._2.iterator
 			
+			val elt1Player:Turn = playerIt.next
+			val elt1PlayerTurnIt = elt1Player.plays.iterator
+			it("has the correct first card in first Turn in player list"){
+				assertInt(elt1Player.turn, 2, "TURN")				
+				assertCard("CS2_101", 2, elt1PlayerTurnIt.next)		
+			}
+			
+			val elt1Opponent:Turn = opponentIt.next
+			val elt1OpponentTurnIt = elt1Opponent.plays.iterator
+			it("has the correct first card in first Turn in opponent list"){
+				assertInt(elt1Opponent.turn, 2, "TURN")
+				assertCard("OG_303", 2, elt1OpponentTurnIt.next)
+			}
+			
+			val elt2Opponent:Turn = opponentIt.next
+			val elt2OpponentTurnIt = elt2Opponent.plays.iterator
+			it("has the correct first card in second Turn in opponent list"){
+				assertInt(elt2Opponent.turn, 3, "TURN")
+				assertCard("CS2_034", 2, elt2OpponentTurnIt.next)
+			}
+			
+			it("has the correct second card in second Turn in opponent list"){
+				assertCard("NEW1_012", 1, elt2OpponentTurnIt.next)
+			}
 		}
 	}
-	
+	"[{\"player\":\"opponent\",\"turn\":2,\"card\":{\"id\":\"OG_303\",\"name\":\"Cult Sorcerer\",\"mana\":2}},"+
+		"{\"player\":\"me\",\"turn\":2,\"card\":{\"id\":\"CS2_101\",\"name\":\"Reinforce\",\"mana\":2}},"+
+		"{\"player\":\"opponent\",\"turn\":3,\"card\":{\"id\":\"CS2_034\",\"name\":\"Fireblast\",\"mana\":2}},"+
+		"{\"player\":\"opponent\",\"turn\":3,\"card\":{\"id\":\"NEW1_012\",\"name\":\"Mana Wyrm\",\"mana\":1}}]"
 	
 	def assertPlayListElement(expectedId:String,expectedMana:Int,expectedTurn:Int, parsedTurn:(Card,Int)){
 		assertCard(expectedId, expectedMana, parsedTurn._1)
@@ -98,10 +128,10 @@ class JsonParserTest extends FunSpec with BeforeAndAfter{
 	}
 	
 	def assertString(expected: String, actual: String, paramName:String){
-		assert(expected.equals(actual), "Failure mathing" + paramName +". Expected: "+ expected +" Actual: "+ actual)
+		assert(expected.equals(actual), "Failure mathing " + paramName +". Expected: "+ expected +" Actual: "+ actual)
 	}
 	def assertInt(expected: Int, actual: Int, paramName:String){
-		assert(expected == actual, "Failure mathing" + paramName +". Expected: "+ expected +" Actual: "+ actual)
+		assert(expected == actual, "Failure mathing " + paramName +". Expected: "+ expected +" Actual: "+ actual)
 	}
 	def assertTrue(actual:Boolean, paramName:String){
 		assert(actual,""+paramName+" wasn't true as expected")

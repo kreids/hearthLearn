@@ -3,6 +3,7 @@ package hearthstone.parse
 import play.api.libs.json._
 import play.api.libs.functional.syntax._
 import scala.collection.mutable.ListBuffer
+import com.sun.beans.decoder.FalseElementHandler
 
 class JsonParser {
 	
@@ -53,11 +54,37 @@ class JsonParser {
 	
 	def  historyParseToTurnList(historyString:String):(List[Turn],List[Turn]) = {
 		val jHistory:List[JsObject] = Json.parse(historyString).as[List[JsObject]]
-		val playerListBuff:ListBuffer[(Card,Int)] = new ListBuffer[(Card,Int)]
-		val opponentListBuff:ListBuffer[(Card,Int)] = new ListBuffer[(Card,Int)]
+		var cardListBuff:ListBuffer[Card] = new ListBuffer[Card]
 		val playerTurnBuff:ListBuffer[Turn] = new ListBuffer[Turn]
 		val opponentTurnBuff:ListBuffer[Turn] = new ListBuffer[Turn]
-		(null,null)
+		
+		var prevTurn:Int = -1
+		var prevIsOpponent:Boolean = false 
+		
+		for(jPlay<-jHistory){
+			val play = playParse(jPlay)
+			if((prevTurn != -1)&&
+					(play._2 != prevTurn || play._3 != prevIsOpponent)){
+				if(prevIsOpponent){
+					opponentTurnBuff += new Turn(prevTurn,cardListBuff.toList) 
+				}
+				else{
+					playerTurnBuff += new Turn(prevTurn,cardListBuff.toList) 
+				}
+				cardListBuff = new ListBuffer[Card]
+			}
+			cardListBuff += play._1
+			prevTurn = play._2
+			prevIsOpponent = play._3
+		}
+		if(prevIsOpponent){
+			opponentTurnBuff += new Turn(prevTurn,cardListBuff.toList)
+		}
+		else{
+			playerTurnBuff += new Turn(prevTurn,cardListBuff.toList)
+		}
+		
+		(playerTurnBuff.toList,opponentTurnBuff.toList)
 	}
 	
 	def turnParse(turn:String, isOppenent:Boolean,number:Int ) : Turn = {

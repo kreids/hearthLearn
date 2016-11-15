@@ -1,5 +1,6 @@
 package hearthstone.parse
 
-class Turn(turn: Int, plays: List[Card]) {
-	
+class Turn(xTurn: Int, xPlays: List[Card]) {
+	val turn = xTurn
+	val plays = xPlays
 }

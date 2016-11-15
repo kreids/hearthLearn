@@ -69,6 +69,12 @@ class JsonParserTest extends FunSpec with BeforeAndAfter{
 		}
 	}
 	
+	describe("historyParseToTurnList"){
+		describe("when called on any turn history spanning turns after turn 1"){
+			
+		}
+	}
+	
 	
 	def assertPlayListElement(expectedId:String,expectedMana:Int,expectedTurn:Int, parsedTurn:(Card,Int)){
 		assertCard(expectedId, expectedMana, parsedTurn._1)

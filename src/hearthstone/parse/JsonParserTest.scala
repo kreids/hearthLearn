@@ -12,6 +12,14 @@ class JsonParserTest extends FunSpec with BeforeAndAfter{
 		"{\"player\":\"me\",\"turn\":2,\"card\":{\"id\":\"CS2_101\",\"name\":\"Reinforce\",\"mana\":2}},"+
 		"{\"player\":\"opponent\",\"turn\":3,\"card\":{\"id\":\"CS2_034\",\"name\":\"Fireblast\",\"mana\":2}},"+
 		"{\"player\":\"opponent\",\"turn\":3,\"card\":{\"id\":\"NEW1_012\",\"name\":\"Mana Wyrm\",\"mana\":1}}]"
+	private final val ANY_SHORT_GAME =
+		"{\"user_hash\":\"22EB1EB98A7EACC5AAB5750557E197D6\",\"region\":\"Americas\",\"id\":45850386,\"mode\":\"ranked\",\"hero\":\"Paladin\","+
+		"\"hero_deck\":null,\"opponent\":\"Mage\",\"opponent_deck\":\"Tempo\",\"coin\":true,\"result\":\"loss\",\"duration\":1039,\"rank\":null,"+
+		"\"legend\":null,\"note\":null,\"added\":\"2016-10-18T17:50:28Z\", \"card_history\":" +
+		"[{\"player\":\"opponent\",\"turn\":2,\"card\":{\"id\":\"OG_303\",\"name\":\"Cult Sorcerer\",\"mana\":2}},"+
+		"{\"player\":\"me\",\"turn\":2,\"card\":{\"id\":\"CS2_101\",\"name\":\"Reinforce\",\"mana\":2}},"+
+		"{\"player\":\"opponent\",\"turn\":3,\"card\":{\"id\":\"CS2_034\",\"name\":\"Fireblast\",\"mana\":2}},"+
+		"{\"player\":\"opponent\",\"turn\":3,\"card\":{\"id\":\"NEW1_012\",\"name\":\"Mana Wyrm\",\"mana\":1}}]}"
 	
 	var objectUnderTest: JsonParser = new JsonParser
 	
@@ -102,6 +110,36 @@ class JsonParserTest extends FunSpec with BeforeAndAfter{
 		}
 	}
 	
+	describe("gameParse"){
+		describe("When called on any short game"){
+			val gameParse = objectUnderTest.gameParse(ANY_SHORT_GAME)
+			val playerGame = gameParse._1
+			val opponentGame = gameParse._2
+
+			it("Has the correct player game"){
+				assertGame(true, false, Hero.PALADIN, 0, playerGame)
+			}
+			it("Has the correct opponent game"){
+				assertGame(false, true, Hero.MAGE, 0, opponentGame)
+			}
+
+		}
+	}
+
+	
+	
+	def assertGame(expectedCoin:Boolean, expectedWin:Boolean, expectedHero:Hero.Value,expectedRank:Int, actualGame:Game){
+		assertBoolean(expectedCoin, actualGame.hasCoin, "HAS COIN")
+		assertBoolean(expectedWin, actualGame.didWin, "DID WIN")
+		assertBoolean(expectedWin, actualGame.didWin, "DID WIN")
+		assertHero(expectedHero, actualGame.hero)
+		assertInt(expectedRank, actualGame.rank, "RANK")
+	}
+	
+	def assertHero(expectedHero:Hero.Value, actualHero:Hero.Value){
+		assert(expectedHero.equals(actualHero),"Failure mathing HERO. Expected: "+ expectedHero +" Actual: "+ actualHero)
+	}
+
 	
 	def assertPlayListElement(expectedId:String,expectedMana:Int,expectedTurn:Int, parsedTurn:(Card,Int)){
 		assertCard(expectedId, expectedMana, parsedTurn._1)
@@ -112,7 +150,6 @@ class JsonParserTest extends FunSpec with BeforeAndAfter{
 		assertCard(expectedId, expectedMana, parsedTurn._1)
 		assertInt(expectedTurn,parsedTurn._2,"TURN")
 		assertBoolean(expectedIsOpponent,parsedTurn._3, "IS OPPONENT")
-		
 	}
 	
 	def assertBoolean(expected:Boolean,actual:Boolean,paramName:String){

@@ -4,6 +4,7 @@ import play.api.libs.json._
 import play.api.libs.functional.syntax._
 import scala.collection.mutable.ListBuffer
 import com.sun.beans.decoder.FalseElementHandler
+import scala.xml.Null
 
 class JsonParser {
 	
@@ -90,9 +91,99 @@ class JsonParser {
 		(playerTurnBuff.toList,opponentTurnBuff.toList)
 	}
 	
-	def turnParse(turn:String, isOppenent:Boolean,number:Int ) : Turn = {
-		val jTurn: JsValue = Json.parse(turn)
+	def  historyParseToTurnList(jHistory:List[JsObject]):(List[Turn],List[Turn]) = {
+		var cardListBuff:ListBuffer[Card] = new ListBuffer[Card]
+		val playerTurnBuff:ListBuffer[Turn] = new ListBuffer[Turn]
+		val opponentTurnBuff:ListBuffer[Turn] = new ListBuffer[Turn]
 		
-		new Turn(1, null)
+		var prevTurn:Int = -1
+		var prevIsOpponent:Boolean = false 
+		
+		for(jPlay<-jHistory){
+			val play = playParse(jPlay)
+			if(prevTurn == -1){
+				prevIsOpponent = play._3
+			}
+			if((prevTurn != -1)&&
+					(play._2 != prevTurn || play._3 != prevIsOpponent)){
+				if(prevIsOpponent){
+					opponentTurnBuff += new Turn(prevTurn,cardListBuff.toList) 
+				}
+				else{
+					playerTurnBuff += new Turn(prevTurn,cardListBuff.toList) 
+				}
+				cardListBuff = new ListBuffer[Card]
+			}
+			cardListBuff += play._1
+			prevTurn = play._2
+			prevIsOpponent = play._3
+		}
+		if(prevIsOpponent){
+			opponentTurnBuff += new Turn(prevTurn,cardListBuff.toList)
+		}
+		else{
+			playerTurnBuff += new Turn(prevTurn,cardListBuff.toList)
+		}
+		
+		(playerTurnBuff.toList,opponentTurnBuff.toList)
+	}
+	
+	def getHero(heroString: String) :Hero.Value ={
+		if(heroString.equals("Druid")){
+			Hero.DRUID
+		}
+		else if(heroString.equals("Hunter")){
+			Hero.HUNTER
+		}
+		else if(heroString.equals("Mage")){
+			Hero.MAGE
+		}
+		else if(heroString.equals("Paladin")){
+			Hero.PALADIN
+		}
+		else if(heroString.equals("Priest")){
+			Hero.PRIEST
+		}
+		else if(heroString.equals("Rogue")){
+			Hero.ROGUE
+		}
+		else if(heroString.equals("Shaman")){
+			Hero.SHAMAN
+		}
+		else if(heroString.equals("Warlock")){
+			Hero.WARLOCK
+		}
+		else if(heroString.equals("Warrior")){
+			Hero.WARRIOR
+		}
+		else{	
+			null
+		}
+	}
+	
+	def gameParse(game: String ) : (Game, Game) = {
+		val jGame: JsValue = Json.parse(game)
+		
+		val playerHero:Hero.Value = getHero((jGame\"hero").as[JsString].value)
+		val opponentHero:Hero.Value = getHero((jGame\"opponent").as[JsString].value)
+		val playerCoin:Boolean = (jGame\"coin").as[JsBoolean].value
+		val playerWin:Boolean = ((jGame\"result").as[JsString].value.equals("win"))
+		//val isStandard:Boolean = ((jGame\"mode").as[JsString].value.equals("standard"))
+		var rank:Int = -1
+		var ll = (jGame\"rank").as[JsValue]
+		if(ll == JsNull){
+			rank = 0
+		}
+		else{	
+			rank =(jGame\"rank").as[JsNumber].value.toIntExact
+		}
+		
+		val turns:(List[Turn],List[Turn]) = historyParseToTurnList(
+				(jGame\"card_history").as[List[JsObject]])
+		
+		
+		val playerGame:Game = new Game(playerCoin, playerWin, playerHero,rank, turns._1)
+		val opponentGame:Game = new Game(!playerCoin, !playerWin, opponentHero,rank, turns._1)
+		(playerGame, opponentGame)
 	}
 }

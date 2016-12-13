@@ -1,7 +1,9 @@
 package hearthstone.parse
 
-class Card(xId: String, xMana: Int) {
-	var id:String = xId
-	var mana:Int = xMana
+case class Card(id: String, mana: Int) extends java.io.Serializable {
+	var ID:String = id
+	var MANA:Int = mana
 	
+	override def toString: String = 
+		"{id:"+ID+", mana:"+MANA+"}"
 }

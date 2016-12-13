@@ -20,8 +20,18 @@ class JsonParserTest extends FunSpec with BeforeAndAfter{
 		"{\"player\":\"me\",\"turn\":2,\"card\":{\"id\":\"CS2_101\",\"name\":\"Reinforce\",\"mana\":2}},"+
 		"{\"player\":\"opponent\",\"turn\":3,\"card\":{\"id\":\"CS2_034\",\"name\":\"Fireblast\",\"mana\":2}},"+
 		"{\"player\":\"opponent\",\"turn\":3,\"card\":{\"id\":\"NEW1_012\",\"name\":\"Mana Wyrm\",\"mana\":1}}]}"
+		private final val SHORT_INPUT_STREAM = 
+		"{\"range_start\":\"2016-11-20T00:00:00Z\",\"range_end\":\"2016-11-21T00:00:00Z\",\"unique_users\":25,\"total_games\":270,\"games\":"+
+		"{\"user_hash\":\"22EB1EB98A7EACC5AAB5750557E197D6\",\"region\":\"Americas\",\"id\":45850386,\"mode\":\"ranked\",\"hero\":\"Paladin\","+
+		"\"hero_deck\":null,\"opponent\":\"Mage\",\"opponent_deck\":\"Tempo\",\"coin\":true,\"result\":\"loss\",\"duration\":1039,\"rank\":null,"+
+		"\"legend\":null,\"note\":null,\"added\":\"2016-10-18T17:50:28Z\", \"card_history\":" +
+		"[{\"player\":\"opponent\",\"turn\":2,\"card\":{\"id\":\"OG_303\",\"name\":\"Cult Sorcerer\",\"mana\":2}},"+
+		"{\"player\":\"me\",\"turn\":2,\"card\":{\"id\":\"CS2_101\",\"name\":\"Reinforce\",\"mana\":2}},"+
+		"{\"player\":\"opponent\",\"turn\":3,\"card\":{\"id\":\"CS2_034\",\"name\":\"Fireblast\",\"mana\":2}},"+
+		"{\"player\":\"opponent\",\"turn\":3,\"card\":{\"id\":\"NEW1_012\",\"name\":\"Mana Wyrm\",\"mana\":1}}]}]}"	
+		
 	
-	var objectUnderTest: JsonParser = new JsonParser
+	var objectUnderTest: HearthJsonParser = new HearthJsonParser
 	
 	
 	describe("cardParse"){
@@ -52,7 +62,7 @@ class JsonParserTest extends FunSpec with BeforeAndAfter{
 			}
 		}
 	}
-	
+	/*
 	describe("historyParseToPlayList"){
 		describe("when called on any turn history spanning turns after turn 1"){
 			val historyParse = objectUnderTest.historyParseToPlayList(ANY_VALID_CARD_HISTORY_SPANNING_TURNS_AFTER_TURN_ONE)
@@ -76,7 +86,7 @@ class JsonParserTest extends FunSpec with BeforeAndAfter{
 			}		
 		}
 	}
-	
+	*/
 	describe("historyParseToTurnList"){
 		describe("when called on any turn history spanning turns after turn 1"){
 			val historyParse = objectUnderTest.historyParseToTurnList(ANY_VALID_CARD_HISTORY_SPANNING_TURNS_AFTER_TURN_ONE)
@@ -125,8 +135,10 @@ class JsonParserTest extends FunSpec with BeforeAndAfter{
 
 		}
 	}
+	describe("inputParse"){
+		
+	}
 
-	
 	
 	def assertGame(expectedCoin:Boolean, expectedWin:Boolean, expectedHero:Hero.Value,expectedRank:Int, actualGame:Game){
 		assertBoolean(expectedCoin, actualGame.hasCoin, "HAS COIN")
@@ -157,8 +169,8 @@ class JsonParserTest extends FunSpec with BeforeAndAfter{
 	}
 	
 	def assertCard(expectedId:String,expectedMana:Int,parsedCard:Card){
-		assertString(expectedId, parsedCard.id, "ID")
-		assertInt(expectedMana, parsedCard.mana, "MANA")
+		assertString(expectedId, parsedCard.ID, "ID")
+		assertInt(expectedMana, parsedCard.MANA, "MANA")
 	}
 	
 	def assertString(expected: String, actual: String, paramName:String){
@@ -170,6 +182,5 @@ class JsonParserTest extends FunSpec with BeforeAndAfter{
 	def assertTrue(actual:Boolean, paramName:String){
 		assert(actual,""+paramName+" wasn't true as expected")
 	}
-	
 	
 }

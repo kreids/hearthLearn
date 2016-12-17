@@ -25,7 +25,8 @@ class HearthJsonParser {
 	}
 	def cardParse(root:JsonNode):(Card) = {
 		new Card(root.path("id").asText(),
-				root.path("mana").asInt(-1))
+				root.path("mana").asInt(-1),
+				root.path("name").asText())
 	}
 	
 	def playParse(play: String): (Card, Int, Boolean) ={
@@ -129,7 +130,7 @@ class HearthJsonParser {
 		var rank:Int = root.get("rank").asInt(0)
 		val turns = historyParseToTurnList(root.get("card_history"))
 		val playerGame:Game = new Game(playerCoin, playerWin, playerHero,rank, turns._1)
-		val opponentGame:Game = new Game(!playerCoin, !playerWin, opponentHero,rank, turns._1)
+		val opponentGame:Game = new Game(!playerCoin, !playerWin, opponentHero,rank, turns._2)
 		(playerGame, opponentGame)
 	}
 	
@@ -147,8 +148,10 @@ class HearthJsonParser {
 		while ((games.get(i)!=null)){
 			val gameTuple:(Game,Game) = gameParse(games.get(i))
 			i =i +1
-			retBuf += gameTuple._1
-			retBuf += gameTuple._2
+			if(gameTuple._1.turns.length>1)
+				retBuf += gameTuple._1
+			if(gameTuple._2.turns.length>1)
+				retBuf += gameTuple._2
 		}
 		retBuf.toList
 	}

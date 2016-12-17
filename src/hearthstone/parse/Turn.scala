@@ -1,9 +1,34 @@
 package hearthstone.parse
 
+import scala.collection.mutable.ListBuffer
+
 class Turn(xTurn: Int, xPlays: List[Card]) extends java.io.Serializable {
 	val turn = xTurn
 	val plays = xPlays
 	
+	def getCardIdListBuffer: ListBuffer[(String,String)] ={
+		val cardIdBuff = new ListBuffer[(String,String)]
+		plays.foreach { play =>
+			val tuple = (play.id,play.name)
+			cardIdBuff += tuple }
+		cardIdBuff
+	}
+	def getCardIdList = 
+		getCardIdListBuffer.toList
+	
+	def toStringBuilder: StringBuilder ={
+		val sb = new StringBuilder
+		sb.append("{turn: ")
+		sb.append(turn)
+		sb.append(", plays:[")
+		plays.foreach { play => 
+			sb.append(play.toStringBuilder)
+			sb.append(", ")}
+		sb.delete(sb.length-3, sb.length-1)
+		sb.append("]")
+
+	}
+	
 	override def toString: String =
-		"{turn:"+turn+", plays:["+plays.foreach(print)+"]}"
+		toStringBuilder.toString
 }

@@ -28,12 +28,14 @@ object sparkFunctions {
 		val shamanCards = KMeans.cardFreqFromGames(sc, (games.filter { game => game.hero.equals(Hero.SHAMAN)}))
 		shamanCards.take(10).foreach(game => println(game))
 		
-		val shamanDF = KMeans.dataFrameFromCardFreq(sc, sql, shamanCards)
+		val shamanDf = KMeans.dataFrameFromCardFreq(sc, sql, shamanCards)
 		
-		shamanDF.show(10)
+		shamanDf.show(10)
 		
+		val shamanCardVectorized = KMeans.cardFreqVectorFromCardFreq(sc, shamanDf)
+		//shamanCardVectorized.show(10)
 		
-		
+		shamanCardVectorized.select("card ID Freqs").show(10,false)
 		
 	}
 	

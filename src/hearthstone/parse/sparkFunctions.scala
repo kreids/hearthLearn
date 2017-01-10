@@ -30,16 +30,19 @@ object sparkFunctions {
 		val sc = new SparkContext(conf)
 		val sql = new SQLContext(sc)
 	
-		val games = getGamesFromTextFile(sc,"data/2016-11-28.json").cache()
+		val games = getGamesFromTextFile(sc,"data/2016-11-28.json").filter{game => game.hero.equals(Hero.SHAMAN)}.cache()
 		games.filter { game => game.rank<15 }.filter{game => game.hero.equals(Hero.SHAMAN)}.take(15).foreach { game => println(game) }
 
 		val combos = games.flatMap { game => GraphTransforms.playCombosFromGame(game) }.cache()
+		combos
 		//combos.take(2).foreach(println)
 		val edges:RDD[Edge[PlayCombo]] = combos.map { combo => GraphTransforms.edgeFromCombo(combo) }.cache()
 		
-		val graph = Graph.fromEdges(edges, "Card");
-		
-				
+		val graph = Graph.fromEdges(edges, "Card").groupEdges((combo1, combo2)=> 
+			new PlayCombo(combo1.firstCard, combo1.secondCard, combo1.hero,combo1.wins+combo2.wins, combo1.wins+combo2.wins))
+
+			
+		graph.edges.take(50).foreach(println) 
 		/*val shamanCards = KMeans.cardFreqFromGames(sc, (games.filter { game => game.hero.equals(Hero.SHAMAN)}))
 		shamanCards.take(10).foreach(game => println(game))
 		

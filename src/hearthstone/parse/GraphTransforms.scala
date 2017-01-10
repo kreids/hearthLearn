@@ -15,10 +15,10 @@ object GraphTransforms {
 		var wins:Int = 0
 		var losses:Int = 0
 		if(game.didWin){
-			wins += 1
+			wins = 1
 		}
 		else {
-			losses += 1 
+			losses = 1 
 		}
 		cardList.tail.foldLeft(cardList.head)((card1: Card, card2: Card) =>{
 			comboBuffer += new PlayCombo(card1, card2, game.hero, wins, losses)

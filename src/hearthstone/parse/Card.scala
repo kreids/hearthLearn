@@ -9,7 +9,7 @@ case class Card(id: String, mana: Int, name:String) extends java.io.Serializable
 		val sb = new StringBuilder
 		sb.append("{id: ")
 		sb.append(ID)
-		sb.append(", name")
+		sb.append(", name: ")
 		sb.append(name)
 		sb.append(", mana:")
 		sb.append(MANA)

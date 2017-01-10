@@ -13,6 +13,18 @@ class Game(xHasCoin: Boolean, xDidWin: Boolean, xHero: Hero.Value, xRank:Int, xT
 	var rank = xRank
 	var turns = xTurns
 	
+	def getCardListBuff:ListBuffer[Card] ={
+		val cardBuff = new ListBuffer[Card]
+		xTurns.foreach{turn =>
+			turn.getCardList
+			.foreach { card =>cardBuff+= card }
+		}
+		cardBuff
+	}
+	def getCardList:List[Card] = {
+		getCardListBuff.toList
+	}
+	
 	def getCardIdListBuff: ListBuffer[String] ={
 		val cardIdBuff = new ListBuffer[String]
 		xTurns.foreach{turn =>

@@ -2,6 +2,6 @@ package hearthstone.parse
 
 import org.apache.spark.graphx.Edge
 
-case class PlayCombo(firstCard: Card, secondCard: Card, hero: Hero.Value, didWin: Boolean){
+case class PlayCombo(firstCard: Card, secondCard: Card, hero: Hero.Value, wins: Int, losses: Int){
 	
 }

@@ -38,8 +38,7 @@ object sparkFunctions {
 		//combos.take(2).foreach(println)
 		val edges:RDD[Edge[PlayCombo]] = combos.map { combo => GraphTransforms.edgeFromCombo(combo) }.cache()
 		
-		val graph = Graph.fromEdges(edges, "Card").groupEdges((combo1, combo2)=> 
-			new PlayCombo(combo1.firstCard, combo1.secondCard, combo1.hero,combo1.wins+combo2.wins, combo1.wins+combo2.wins))
+		val graph = GraphTransforms.graphFromEdges(edges)
 
 			
 		graph.edges.take(50).foreach(println) 

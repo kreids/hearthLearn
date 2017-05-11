@@ -14,6 +14,7 @@ import org.apache.spark.graphx.Graph
 import org.apache.spark.graphx.Graph
 import org.apache.spark.graphx.Graph
 import org.apache.spark.graphx.Graph
+import org.apache.spark.sql.catalyst.expressions.aggregate.First
 
 
 object sparkFunctions {
@@ -38,10 +39,13 @@ object sparkFunctions {
 		//combos.take(2).foreach(println)
 		val edges:RDD[Edge[PlayCombo]] = combos.map { combo => GraphTransforms.edgeFromCombo(combo) }.cache()
 		
+		
+		
 		val graph = GraphTransforms.graphFromEdges(edges)
-
 			
-		graph.edges.take(50).foreach(println) 
+		//graph.edges.take(50).foreach(println) 
+		//graph.vertices.take(50).foreach(println) 
+		GraphTransforms.collectSampleComboStats(sc, sql,graph)
 		/*val shamanCards = KMeans.cardFreqFromGames(sc, (games.filter { game => game.hero.equals(Hero.SHAMAN)}))
 		shamanCards.take(10).foreach(game => println(game))
 		

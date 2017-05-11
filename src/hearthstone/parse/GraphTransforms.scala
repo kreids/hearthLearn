@@ -6,6 +6,10 @@ import org.apache.spark.graphx.Edge
 import org.apache.spark.rdd._
 
 import scala.util.MurmurHash
+import org.apache.spark.SparkContext
+import org.apache.spark.sql.SQLContext
+import java.sql.Struct
+import breeze.linalg.Axis._1
 
 
 object GraphTransforms {
@@ -32,8 +36,25 @@ object GraphTransforms {
 				MurmurHash.stringHash(combo.secondCard.id),
 				combo)
 	}
+	
 	def graphFromEdges(edges:RDD[Edge[PlayCombo]]): Graph[String,PlayCombo] = {
 		Graph.fromEdges(edges, "Card").groupEdges((combo1, combo2)=> 
-			new PlayCombo(combo1.firstCard, combo1.secondCard, combo1.hero,combo1.wins+combo2.wins, combo1.wins+combo2.wins))
+			new PlayCombo(combo1.firstCard, combo1.secondCard, combo1.hero,combo1.wins+combo2.wins, combo1.losses+combo2.losses))
+	}
+	
+	//type mismatch; found : org.apache.spark.rdd.RDD[((org.apache.spark.graphx.VertexId, Array[org.apache.spark.graphx.Edge[hearthstone.parse.PlayCombo]]), Int)] (which expands to) org.apache.spark.rdd.RDD[((Long, Array[org.apache.spark.graphx.Edge[hearthstone.parse.PlayCombo]]), Int)] required: org.apache.spark.graphx.VertexRDD[String]
+	def collectSampleComboStats(sc: SparkContext,sql:SQLContext,graph:Graph[String,PlayCombo])={
+		def ttt[T](v:T) =v	
+		var stepTreelets= graph.ops.collectEdges(EdgeDirection.Out)
+		//stepTreelets.take(1).foreach(x => println(x._2.foreach { x => println(x.attr.wins +" "+ x.attr.secondCard) }))
+		var treeletStats=stepTreelets.map(treelet => (treelet, treelet._2.map {x => x.attr.wins + x.attr.losses }.sum))
+		//treelets2.take(4).foreach(x=>println(x._1._2.foreach {y=> println(y+" "+ x)}))
+		
+		var flatCardStats= treeletStats.flatMap(x=>x._1._2.map { y => (y.attr.hero,y.attr.firstCard,y.attr.secondCard,y.attr.wins, y.attr.losses,x._2) })
+		
+		
+		flatCardStats.take(10).foreach {println}
+		//var statsDF=sql.createDataFrame(treeletStats)
+		//statsDF.take(10).foreach {println}
 	}
 }

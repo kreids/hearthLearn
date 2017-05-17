@@ -1,7 +1,12 @@
-package hearthstone.parse
+package hearthstone.graph
 
 import org.scalatest.FunSpec
-import org.scalatest.BeforeAndAfter
+import hearthstone.parse.Card
+import hearthstone.parse.Game
+import hearthstone.graph.GraphTransforms
+import hearthstone.parse.Hero
+import hearthstone.parse.PlayCombo
+import hearthstone.parse.Turn
 
 
 class GraphTransformsTest extends FunSpec{

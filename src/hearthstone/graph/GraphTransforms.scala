@@ -1,18 +1,26 @@
-package hearthstone.parse
+package hearthstone.graph
 
 import org.apache.spark.graphx._
 import scala.collection.mutable.ListBuffer
 import org.apache.spark.graphx.Edge
 import org.apache.spark.rdd._
-
 import scala.util.MurmurHash
 import org.apache.spark.SparkContext
 import org.apache.spark.sql.SQLContext
-import java.sql.Struct
-import breeze.linalg.Axis._1
+import hearthstone.parse.Card
+import hearthstone.parse.Game
+import hearthstone.parse.PlayCombo
 
 
 object GraphTransforms {
+	
+	def verteciesFromGame(game: Game)={
+		val cardList = game.getCardList
+		var wins:Int=0
+		if(game.didWin){
+			wins=1
+		}
+	}
 	
 	def playCombosFromGame(game: Game): List[PlayCombo] ={
 		val comboBuffer: ListBuffer[PlayCombo] = new ListBuffer[PlayCombo]

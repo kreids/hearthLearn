@@ -15,6 +15,7 @@ import org.apache.spark.graphx.Graph
 import org.apache.spark.graphx.Graph
 import org.apache.spark.graphx.Graph
 import org.apache.spark.sql.catalyst.expressions.aggregate.First
+import hearthstone.graph.GraphTransforms
 
 
 object sparkFunctions {

@@ -10,17 +10,32 @@ import org.apache.spark.sql.SQLContext
 import hearthstone.parse.Card
 import hearthstone.parse.Game
 import hearthstone.parse.PlayCombo
+import javax.validation.constraints.Null
+import breeze.linalg.Axis._0
+
 
 
 object GraphTransforms {
 	
-	def verteciesFromGame(game: Game)={
-		val cardList = game.getCardList
-		var wins:Int=0
-		if(game.didWin){
-			wins=1
-		}
+	def graphFromVerteciesAndEdges(verts:RDD[(VertexId,(Card,Int))], 
+			edges:RDD[Edge[PlayCombo]]):Graph[(Card,Int),PlayCombo]={
+	 	Graph(verts,edges).groupEdges((combo1, combo2)=> 
+			new PlayCombo(combo1.firstCard, combo1.secondCard, combo1.hero,combo1.wins+combo2.wins, combo1.losses+combo2.losses))
 	}
+	
+	def verteciesFromRDD( games:RDD[Game]):RDD[(VertexId,(Card,Int))] = {
+	 	val vertecies:RDD[(VertexId,(Card,Int))] =games.flatMap { game => game.getCardList.map { card => vertexFromCard(card) } }
+	 	vertecies.reduceByKey((vertexA,vertexB) => (vertexA._1,vertexA._2+vertexB._2))
+	}
+	
+	def vertexFromCard(card: Card):(VertexId, (Card, Int)) = {
+		(MurmurHash.stringHash(card.ID),(card,1))
+	}
+	def graphFromEdges(edges:RDD[Edge[PlayCombo]]): Graph[String,PlayCombo] = {
+		Graph.fromEdges(edges, "Card").groupEdges((combo1, combo2)=> 
+			new PlayCombo(combo1.firstCard, combo1.secondCard, combo1.hero,combo1.wins+combo2.wins, combo1.losses+combo2.losses))
+	}
+	
 	
 	def playCombosFromGame(game: Game): List[PlayCombo] ={
 		val comboBuffer: ListBuffer[PlayCombo] = new ListBuffer[PlayCombo]
@@ -45,10 +60,6 @@ object GraphTransforms {
 				combo)
 	}
 	
-	def graphFromEdges(edges:RDD[Edge[PlayCombo]]): Graph[String,PlayCombo] = {
-		Graph.fromEdges(edges, "Card").groupEdges((combo1, combo2)=> 
-			new PlayCombo(combo1.firstCard, combo1.secondCard, combo1.hero,combo1.wins+combo2.wins, combo1.losses+combo2.losses))
-	}
 	
 	//type mismatch; found : org.apache.spark.rdd.RDD[((org.apache.spark.graphx.VertexId, Array[org.apache.spark.graphx.Edge[hearthstone.parse.PlayCombo]]), Int)] (which expands to) org.apache.spark.rdd.RDD[((Long, Array[org.apache.spark.graphx.Edge[hearthstone.parse.PlayCombo]]), Int)] required: org.apache.spark.graphx.VertexRDD[String]
 	def collectSampleComboStats(sc: SparkContext,sql:SQLContext,graph:Graph[String,PlayCombo])={

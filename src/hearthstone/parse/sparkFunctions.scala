@@ -43,10 +43,13 @@ object sparkFunctions {
 		
 		
 		val graph = GraphTransforms.graphFromEdges(edges)
-			
+		
+		val cardCountVertecies = GraphTransforms.verteciesFromRDD(games)
+		val comboGraph = GraphTransforms.graphFromVerteciesAndEdges(cardCountVertecies, edges)
+		comboGraph.triplets.take(10).foreach(triplet=>println{triplet.srcAttr+"\n"+triplet.dstAttr+"\n"+triplet.attr+"\n"})
 		//graph.edges.take(50).foreach(println) 
 		//graph.vertices.take(50).foreach(println) 
-		GraphTransforms.collectSampleComboStats(sc, sql,graph)
+		//GraphTransforms.collectSampleComboStats(sc, sql,graph)
 		/*val shamanCards = KMeans.cardFreqFromGames(sc, (games.filter { game => game.hero.equals(Hero.SHAMAN)}))
 		shamanCards.take(10).foreach(game => println(game))
 		

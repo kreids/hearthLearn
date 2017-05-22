@@ -42,11 +42,16 @@ object sparkFunctions {
 		
 		
 		
-		val graph = GraphTransforms.graphFromEdges(edges)
 		
-		val cardCountVertecies = GraphTransforms.verteciesFromRDD(games)
+		val retRerticies = GraphTransforms.verteciesFromRDD(games)
+		val cardCountVertecies = retRerticies._1
+		val cardCount = retRerticies._2
 		val comboGraph = GraphTransforms.graphFromVerteciesAndEdges(cardCountVertecies, edges)
 		comboGraph.triplets.take(10).foreach(triplet=>println{triplet.srcAttr+"\n"+triplet.dstAttr+"\n"+triplet.attr+"\n"})
+		val chi = comboGraph.triplets.map(triplet =>
+			(triplet.attr,GraphTransforms.chiSquaredIndependenceFromTriplet(triplet.attr.wins +triplet.attr.losses,
+					triplet.srcAttr._2, triplet.dstAttr._2, cardCount)))
+		chi.take(10).foreach {println}
 		//graph.edges.take(50).foreach(println) 
 		//graph.vertices.take(50).foreach(println) 
 		//GraphTransforms.collectSampleComboStats(sc, sql,graph)

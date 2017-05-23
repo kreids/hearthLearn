@@ -43,7 +43,7 @@ object GraphTransforms {
 	}
 	
 	def vertexFromCard(card: Card):(VertexId, (Card, Int)) = {
-		(MurmurHash.stringHash(card.ID),(card,1))
+		(MurmurHash.stringHash(card.id),(card,1))
 	}
 	
 	def edgeFromCombo(combo:PlayCombo): Edge[PlayCombo] ={

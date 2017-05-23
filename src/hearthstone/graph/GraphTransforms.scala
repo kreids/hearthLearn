@@ -19,6 +19,15 @@ object GraphTransforms {
 	
 	
 	
+	def chiSquaredFromGames(games:RDD[Game])={
+		 val (verticies,count) = verteciesFromRDD(games)
+		 val playCombos = games.flatMap { game => playCombosFromGame(game) }
+		 val edges = playCombos.map{combo => edgeFromCombo(combo)}
+		 val graph = graphFromVerteciesAndEdges(verticies, edges)
+		 graph.mapTriplets(triplet => chiSquaredIndependenceFromTriplet(
+				 triplet.attr.losses+triplet.attr.wins, triplet.dstAttr._2, triplet.srcAttr._2, count))
+	}
+	
 	def chiSquaredIndependenceFromTriplet(YY: Long,YB:Long, YA:Long, T: Long): Double = {
 		val NB = T - YB
     	val NA = T - YA
@@ -37,7 +46,7 @@ object GraphTransforms {
 	}
 	
 	def verteciesFromRDD( games:RDD[Game]):(RDD[(VertexId,(Card,Int))], Long) = {
-		val count  = games.count()
+		val count:Long  = games.count()
 	 	val vertecies:RDD[(VertexId,(Card,Int))] =games.flatMap { game => game.getCardList.map { card => vertexFromCard(card) } }
 	 	(vertecies.reduceByKey((vertexA,vertexB) => (vertexA._1,vertexA._2+vertexB._2)), count)
 	}

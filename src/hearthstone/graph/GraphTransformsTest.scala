@@ -34,8 +34,8 @@ class GraphTransformsTest extends FunSpec{
 		assertCard(expectedCardId2, expectedMana2, combo.secondCard)	
 	}
 	def assertCard(expectedId:String,expectedMana:Int,parsedCard:Card){
-		assertString(expectedId, parsedCard.ID, "ID")
-		assertInt(expectedMana, parsedCard.MANA, "MANA")
+		assertString(expectedId, parsedCard.id, "ID")
+		assertInt(expectedMana, parsedCard.mana, "MANA")
 	}
 	def assertString(expected: String, actual: String, paramName:String){
 		assert(expected.equals(actual), "Failure mathing " + paramName +". Expected: "+ expected +" Actual: "+ actual)

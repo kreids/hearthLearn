@@ -51,7 +51,7 @@ object sparkFunctions {
 		val chi = comboGraph.triplets.map(triplet =>
 			(triplet.attr,GraphTransforms.chiSquaredIndependenceFromTriplet(triplet.attr.wins +triplet.attr.losses,
 					triplet.srcAttr._2, triplet.dstAttr._2, cardCount)))
-		chi.take(10).foreach {println}
+		chi.take(100).foreach {println}
 		//graph.edges.take(50).foreach(println) 
 		//graph.vertices.take(50).foreach(println) 
 		//GraphTransforms.collectSampleComboStats(sc, sql,graph)

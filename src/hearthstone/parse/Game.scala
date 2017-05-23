@@ -6,16 +6,12 @@ import scala.collection.mutable.ListBuffer
 
 
 
-class Game(xHasCoin: Boolean, xDidWin: Boolean, xHero: Hero.Value, xRank:Int, xTurns: List[Turn])extends java.io.Serializable {
-	var hasCoin = xHasCoin
-	var didWin = xDidWin
-	var hero = xHero
-	var rank = xRank
-	var turns = xTurns
+case class Game(hasCoin: Boolean, didWin: Boolean, hero: Hero.Value, rank:Int, turns: List[Turn])extends java.io.Serializable {
+
 	
 	def getCardListBuff:ListBuffer[Card] ={
 		val cardBuff = new ListBuffer[Card]
-		xTurns.foreach{turn =>
+		turns.foreach{turn =>
 			turn.getCardList
 			.foreach { card =>cardBuff+= card }
 		}
@@ -27,7 +23,7 @@ class Game(xHasCoin: Boolean, xDidWin: Boolean, xHero: Hero.Value, xRank:Int, xT
 	
 	def getCardIdListBuff: ListBuffer[String] ={
 		val cardIdBuff = new ListBuffer[String]
-		xTurns.foreach{turn =>
+		turns.foreach{turn =>
 			turn.getCardIdList
 			.foreach { cardId =>cardIdBuff+= cardId }
 		}

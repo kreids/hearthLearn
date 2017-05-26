@@ -6,6 +6,15 @@ class Turn(xTurn: Int, xPlays: List[Card]) extends java.io.Serializable {
 	val turn = xTurn
 	val plays = xPlays
 	
+	def getCardListBuffer: ListBuffer[Card] ={
+		val cardBuff = new ListBuffer[Card]
+		plays.foreach { play =>
+			cardBuff += play }
+		cardBuff
+	}
+	def getCardList = 
+		getCardListBuffer.toList
+	
 	def getCardIdListBuffer: ListBuffer[String] ={
 		val cardIdBuff = new ListBuffer[String]
 		plays.foreach { play =>
